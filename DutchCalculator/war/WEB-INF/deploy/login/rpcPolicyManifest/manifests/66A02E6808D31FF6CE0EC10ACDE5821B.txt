@@ -1,0 +1,2 @@
+serviceClass: com.louis.login.client.DutchUserService
+path: EA6812ACCF101FD5940890264180285F.gwt.rpc

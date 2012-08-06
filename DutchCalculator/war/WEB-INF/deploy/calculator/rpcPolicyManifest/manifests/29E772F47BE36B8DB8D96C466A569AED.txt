@@ -1,0 +1,2 @@
+serviceClass: com.louis.calculator.client.CalculatorUserService
+path: 2C6B35AC087E82E7FF2025448937A71B.gwt.rpc
