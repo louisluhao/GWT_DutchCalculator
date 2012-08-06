@@ -6,6 +6,8 @@ import java.util.List;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
@@ -85,6 +87,44 @@ public class Calculator implements EntryPoint {
 						});
 			}
 		});
+		
+		registerGroupNameBox.addChangeHandler(new ChangeHandler() {
+			
+			public void onChange(ChangeEvent event) {
+				registerGroupNameCheck();
+			}
+		});
+	}
+	
+	private void registerGroupNameCheck(){
+		if(registerGroupNameBox.getText().length()<1){
+			registerGroupNameTip.setText("must input groupname");
+			RootPanel.get("registerGroupnameGroup").setStyleName(
+					"control-group error");
+			return;
+		}
+		
+		calculatorUserService.ifGroupExist(registerGroupNameBox.getText(), new AsyncCallback<Boolean>() {
+			
+			public void onSuccess(Boolean result) {
+				if(result == true){
+					registerGroupNameTip.setText("group name already exist");
+					RootPanel.get("registerGroupnameGroup").setStyleName(
+							"control-group error");
+					return;
+				}else{
+					registerGroupNameTip.setText("");
+					RootPanel.get("registerGroupnameGroup").setStyleName(
+							"control-group success");
+					return;
+				}
+			}
+			
+			public void onFailure(Throwable caught) {
+				Window.alert("server connection error!");
+				
+			}
+		});
 	}
 
 	private native void clickElement(Element elem) /*-{
@@ -154,7 +194,7 @@ public class Calculator implements EntryPoint {
 							+ "?gwt.codesvr=127.0.0.1:9997");
 				} else {
 					RootPanel.get("welcome").add(welcome);
-					welcome.setText(result.getUsername());
+					welcome.setText("log out" + result.getUsername());
 					currentUser = result;
 					afterLogin();
 				}
