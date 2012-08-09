@@ -3,6 +3,8 @@ package com.louis.server;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 
+import com.louis.calculator.beans.DutchGroup;
+import com.louis.calculator.beans.DutchUser;
 import com.louis.server.jdo.beans.GroupBean;
 import com.louis.server.jdo.beans.PMF;
 import com.louis.server.jdo.beans.UserBean;
@@ -13,35 +15,20 @@ public class DBHelper {
 	 * @param username
 	 * @return UserBean 
 	 */
-	public static UserBean getUserByUsername(String username){
+	public static DutchUser getUserByUsername(String username){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
+			
 			UserBean user = pm.getObjectById(UserBean.class, username);
-			return user;
+			DutchUser returnUser = new DutchUser(true, username, user.getGroupIDs(), user.getApplyGroupIDs());
+			return returnUser;
 		} catch (JDOObjectNotFoundException e) {
 			return null;
 		} finally{
 			pm.close();
 		}
 	}
-	
-	
-	/**
-	 *  get group by username, if user not exist will return null
-	 * @param group name
-	 * @return GroupBean of giving groupname, will be null if group not exist
-	 */
-	public static GroupBean getGroupByGroupname(String groupname){
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try{
-			GroupBean group = pm.getObjectById(GroupBean.class, groupname);
-			return group;
-		}catch(JDOObjectNotFoundException e){
-			return null;
-		}finally{
-			pm.close();
-		}
-	}
+
 	
 	/**
 	 * add group to user
@@ -65,10 +52,31 @@ public class DBHelper {
 		}
 	}
 	
-	public static boolean addNewGroup(GroupBean newGroup){
+	public static boolean UserApplyGroup(String username, String groupname){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try{
+			UserBean user = pm.getObjectById(UserBean.class, username);
+			if(user.addApplyGroup(groupname)){
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}finally{
+			pm.close();
+		}
+	}
+	
+	public static boolean addNewGroup(DutchGroup newgroup){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		GroupBean newGroupBean = new GroupBean(newgroup.getGroupName());
+		newGroupBean.setAdminUserList(newgroup.getAdminUserList());
+		newGroupBean.setApplyUserList(newgroup.getApplyUserlist());
+		newGroupBean.setBillList(newgroup.getBillList());
+		newGroupBean.setUserList(newgroup.getUserList());
 		try {
-			pm.makePersistent(newGroup);
+			pm.makePersistent(newGroupBean);
 			return true;
 		} catch (Exception e) {
 			return false;

@@ -83,6 +83,8 @@ public class DutchUserServiceImpl extends RemoteServiceServlet implements
 		} catch (JDOObjectNotFoundException e) {
 			loginInfo.setLoginState(LoginState.UserNameNotExist);
 			return loginInfo;
+		}finally{
+			pm.close();
 		}
 
 	}

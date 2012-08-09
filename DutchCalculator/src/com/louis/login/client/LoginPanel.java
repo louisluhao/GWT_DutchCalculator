@@ -1,5 +1,7 @@
 package com.louis.login.client;
 
+import org.apache.tools.ant.taskdefs.condition.IsReachable;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -23,7 +25,8 @@ import com.louis.login.beans.LoginInfo.LoginState;
 
 public class LoginPanel implements EntryPoint {
 
-	private static String devModel = "?gwt.codesvr=127.0.0.1:9997";
+	private String devModel = "?gwt.codesvr=127.0.0.1:9997";
+//	private String devModel = "";
 
 	TextBox usernameBox = new TextBox();
 	PasswordTextBox passwordBox = new PasswordTextBox();
@@ -40,7 +43,7 @@ public class LoginPanel implements EntryPoint {
 	Label registerPswCopyTip = new Label();
 	Button registerButton = new Button("Register");
 	Button closeRegisterButton = new Button("Close");
-	Boolean registerFlag;
+	Boolean registerFlag = false;
 
 	/*
 	 * service
@@ -82,7 +85,7 @@ public class LoginPanel implements EntryPoint {
 		registerUsernameBox.addChangeHandler(new ChangeHandler() {
 
 			public void onChange(ChangeEvent event) {
-				registerUsernameBoxCheck();
+				registerUsernameBoxCheckIsRigister(false);
 			}
 		});
 
@@ -105,28 +108,6 @@ public class LoginPanel implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				registerFlag = true;
 				registerCheck();
-				if (registerFlag) {
-					DutchUser newUser = new DutchUser(registerUsernameBox
-							.getText(), registerPswBox.getText());
-					userServiceAsync.RegisterUser(newUser,
-							new AsyncCallback<Boolean>() {
-
-								public void onSuccess(Boolean result) {
-									clickElement(DOM
-											.getElementById("closeRegisterButton"));
-									usernameBox.setText(registerUsernameBox
-											.getText());
-									passwordBox.setText(registerPswBox
-											.getText());
-									clearRegisterPanel();
-									loginButton.click();
-								}
-
-								public void onFailure(Throwable caught) {
-									Window.alert("server connect fail, please try again!");
-								}
-							});
-				}
 			}
 		});
 
@@ -163,6 +144,29 @@ public class LoginPanel implements EntryPoint {
 		});
 	}
 
+	protected void registerUser() {
+		DutchUser newUser = new DutchUser(registerUsernameBox
+				.getText(), registerPswBox.getText());
+		userServiceAsync.RegisterUser(newUser,
+				new AsyncCallback<Boolean>() {
+
+					public void onSuccess(Boolean result) {
+						clickElement(DOM
+								.getElementById("closeRegisterButton"));
+						usernameBox.setText(registerUsernameBox
+								.getText());
+						passwordBox.setText(registerPswBox
+								.getText());
+						clearRegisterPanel();
+						loginButton.click();
+					}
+
+					public void onFailure(Throwable caught) {
+						Window.alert("server connect fail, please try again!");
+					}
+				});
+	}
+
 	private void clearRegisterPanel() {
 		registerPswBox.setText("");
 		registerPswCopyBox.setText("");
@@ -180,9 +184,10 @@ public class LoginPanel implements EntryPoint {
 	}-*/;
 
 	private void registerCheck() {
+		registerFlag = true;
 		registerPswBoxCheck();
 		registerPswCopyBoxCheck();
-		registerUsernameBoxCheck();
+		registerUsernameBoxCheckIsRigister(true);
 	}
 
 	protected void registerPswCopyBoxCheck() {
@@ -212,7 +217,7 @@ public class LoginPanel implements EntryPoint {
 		}
 	}
 
-	protected void registerUsernameBoxCheck() {
+	protected void registerUsernameBoxCheckIsRigister(final boolean isRigister) {
 		if (registerUsernameBox.getText().length() == 0) {
 			registerUsernameTip.setText("must input username");
 			RootPanel.get("registerUsernameGroup").setStyleName(
@@ -236,6 +241,9 @@ public class LoginPanel implements EntryPoint {
 							registerUsernameTip.setText("");
 							RootPanel.get("registerUsernameGroup")
 									.setStyleName("control-group success");
+							if (registerFlag && isRigister) {
+								registerUser();
+							}
 						}
 					}
 
