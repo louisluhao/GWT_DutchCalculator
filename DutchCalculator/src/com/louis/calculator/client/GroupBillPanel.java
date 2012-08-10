@@ -100,7 +100,8 @@ public class GroupBillPanel {
 		if (currentBills.size() > 0) {
 			buildBillTableHeader();
 			int row = 1;
-			for (DutchBill bill : currentBills) {
+			for (int i = currentBills.size() -1; i >=0 ; i--) {
+				DutchBill bill = currentBills.get(i);
 				billsTable.setWidget(row, 0, getValidStatusLabel(bill.isValid()));
 				billsTable.setText(row, 1, bill.getBillTitle());
 				billsTable.setText(row, 2, "$" + bill.getBillAmount());
@@ -109,6 +110,7 @@ public class GroupBillPanel {
 				billsTable.setText(row, 5, bill.getIncludePeoplesString());
 				billsTable.setText(row, 6, bill.getBillDetailNote());
 				billsTable.setWidget(row, 7, getBillVerifyBtn(bill));
+				billsTable.setText(row, 8, bill.getUnverifyUsersString());
 				row++;
 			}
 		} else {
@@ -125,6 +127,7 @@ public class GroupBillPanel {
 		billsTable.setWidget(0, 5, getTableHeader("Related User"));
 		billsTable.setWidget(0, 6, getTableHeader("Bill Note"));
 		billsTable.setWidget(0, 7, getTableHeader("Verify Bill"));
+		billsTable.setWidget(0, 8, getTableHeader("Unverified User"));
 	}
 	
 	private Button getBillVerifyBtn(DutchBill bill) {

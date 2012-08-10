@@ -185,9 +185,11 @@ public class BillPopUpPanel {
 		DutchBill bill = new DutchBill();
 		bill.setBillTitle(billTitle.getText());
 		bill.setBillAmount(Double.valueOf(billAmount.getText()));
-		bill.setBillDate((long) 0);// TODO:
+		bill.setBillDate((long) 0);// TODO:Add date picker!
 		bill.setCreatUser(username);
 		bill.setIncludePeoples(getSelectedUsers());
+		bill.setBillDetailNote(billDetailNote.getText());
+		Window.alert(billDetailNote.getText());
 		calculatorUserService.createBill(bill, group, new AsyncCallback<Void>() {
 
 			public void onSuccess(Void result) {

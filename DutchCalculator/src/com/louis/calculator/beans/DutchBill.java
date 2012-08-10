@@ -60,7 +60,7 @@ public class DutchBill implements IsSerializable {
 	public String getBillDetailNote() {
 		return billDetailNote;
 	}
-	
+
 	public Set<String> getVerifidPeoples() {
 		return verifidPeoples;
 	}
@@ -109,13 +109,36 @@ public class DutchBill implements IsSerializable {
 		return r;
 	}
 
+	public String getUnverifyUsersString() {
+		String unverify = "";
+		boolean first = true;
+		for (String user : getUnverifiedUsers()) {
+			if (first) {
+				unverify += user;
+				first = false;
+			} else {
+				unverify += ", " + user;
+			}
+		}
+		return unverify;
+	}
+
+	private Set<String> getUnverifiedUsers() {
+		Set<String> unverified = new HashSet<String>();
+		for (String user : includePeoples) {
+			if (!verifidPeoples.contains(user)) {
+				unverified.add(user);
+			}
+		}
+		return unverified;
+	}
+
 	public double getSharedPrice() {
 		return billAmount / includePeoples.size();
 	}
-	
-	public boolean isValid(){
+
+	public boolean isValid() {
 		return includePeoples.size() == verifidPeoples.size();
 	}
-
 
 }
