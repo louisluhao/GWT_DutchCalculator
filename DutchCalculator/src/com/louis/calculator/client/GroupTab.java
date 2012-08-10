@@ -72,7 +72,7 @@ public class GroupTab {
 	}
 
 	protected void refreshPanels() {
-		homePanel.RefreshGroup(currentGroup, currentUser);
+		homePanel.RefreshGroup(currentGroup, currentUser, currentBills);
 		billPanel.RefreshGroup(currentGroup, currentUser, currentBills);
 		adminPanel.RefreshGroup(currentGroup, currentUser);
 	}

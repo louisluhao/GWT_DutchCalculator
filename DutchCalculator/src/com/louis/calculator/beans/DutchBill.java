@@ -3,9 +3,11 @@ package com.louis.calculator.beans;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.jdo.annotations.Persistent;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class DutchBill implements IsSerializable{
+public class DutchBill implements IsSerializable {
 
 	private String billNumber;
 
@@ -19,10 +21,12 @@ public class DutchBill implements IsSerializable{
 
 	private Set<String> includePeoples = new HashSet<String>();
 
+	private Set<String> verifidPeoples = new HashSet<String>();
+
 	private String billDetailNote;
-	
-	public DutchBill(){
-		
+
+	public DutchBill() {
+
 	}
 
 	public DutchBill(String billNumber) {
@@ -50,11 +54,20 @@ public class DutchBill implements IsSerializable{
 	}
 
 	public Set<String> getIncludePeoples() {
-		return new HashSet<String>(includePeoples);
+		return includePeoples;
 	}
 
 	public String getBillDetailNote() {
 		return billDetailNote;
+	}
+	
+	public Set<String> getVerifidPeoples() {
+		return verifidPeoples;
+	}
+
+	public void setVerifidPeoples(Set<String> verifidPeoples) {
+		this.verifidPeoples.clear();
+		this.verifidPeoples.addAll(verifidPeoples);
 	}
 
 	public void setBillTitle(String billTitle) {
@@ -81,5 +94,28 @@ public class DutchBill implements IsSerializable{
 	public void setBillDetailNote(String billDetailNote) {
 		this.billDetailNote = billDetailNote;
 	}
+
+	public String getIncludePeoplesString() {
+		String r = "";
+		int count = 1;
+		for (String user : includePeoples) {
+			if (count != includePeoples.size()) {
+				r += user + ", ";
+			} else {
+				r += user;
+			}
+			count++;
+		}
+		return r;
+	}
+
+	public double getSharedPrice() {
+		return billAmount / includePeoples.size();
+	}
+	
+	public boolean isValid(){
+		return includePeoples.size() == verifidPeoples.size();
+	}
+
 
 }

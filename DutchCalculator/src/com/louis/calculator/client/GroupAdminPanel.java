@@ -155,7 +155,13 @@ public class GroupAdminPanel {
 	private Widget getRejectApplyBtn(final int row, final String rejectUsername) {
 		Button rejectButton = new Button("Reject");
 		rejectButton.setStyleName("btn btn-danger");
+		addClickHandlerToRejectButton(rejectButton, rejectUsername);
 		return rejectButton;
+	}
+
+	private void addClickHandlerToRejectButton(Button rejectButton, String rejectUsername) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

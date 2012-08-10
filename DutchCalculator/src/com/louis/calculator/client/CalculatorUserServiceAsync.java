@@ -33,4 +33,6 @@ public interface CalculatorUserServiceAsync {
 	public void createBill(DutchBill bill, DutchGroup group, AsyncCallback<Void> async);
 	
 	public void getBills(List<String> billNames, AsyncCallback<List<DutchBill>> async);
+	
+	public void userVerifyBill(String username, DutchBill bill, AsyncCallback<Void> async);
 }

@@ -9,6 +9,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.DOM;
@@ -102,6 +105,16 @@ public class LoginPanel implements EntryPoint {
 				registerPswCopyBoxCheck();
 			}
 		});
+		
+		registerPswCopyBox.addKeyPressHandler(new KeyPressHandler() {
+			
+			public void onKeyPress(KeyPressEvent event) {
+				if(event.getCharCode() == KeyCodes.KEY_ENTER){
+					registerFlag = true;
+					registerCheck();
+				}
+			}
+		});
 
 		registerButton.addClickHandler(new ClickHandler() {
 
@@ -121,25 +134,38 @@ public class LoginPanel implements EntryPoint {
 		loginButton.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				DutchUser user = new DutchUser(usernameBox.getText(),
-						passwordBox.getText());
-				userServiceAsync.login(user, new AsyncCallback<LoginInfo>() {
+				loginUser();
+			}
+		});
+		
+		passwordBox.addKeyPressHandler(new KeyPressHandler() {
+			
+			public void onKeyPress(KeyPressEvent event) {
+				if(event.getCharCode() == KeyCodes.KEY_ENTER){
+					loginUser();
+				}
+			}
+		});
+	}
 
-					public void onSuccess(LoginInfo result) {
-						if (result.getLoginState() == LoginState.UserNameNotExist) {
-							Window.alert("username not exist!");
-						} else if (result.getLoginState() == LoginState.PassWordWrong) {
-							Window.alert("password wrong!");
-						} else if (result.getLoginState() == LoginState.Success) {
-							Window.Location.replace(GWT.getHostPageBaseURL()
-									+ "calculator.html" + devModel);
-						}
-					}
+	protected void loginUser() {
+		DutchUser user = new DutchUser(usernameBox.getText(),
+				passwordBox.getText());
+		userServiceAsync.login(user, new AsyncCallback<LoginInfo>() {
 
-					public void onFailure(Throwable caught) {
-						Window.alert("server connect fail, please try again");
-					}
-				});
+			public void onSuccess(LoginInfo result) {
+				if (result.getLoginState() == LoginState.UserNameNotExist) {
+					Window.alert("username not exist!");
+				} else if (result.getLoginState() == LoginState.PassWordWrong) {
+					Window.alert("password wrong!");
+				} else if (result.getLoginState() == LoginState.Success) {
+					Window.Location.replace(GWT.getHostPageBaseURL()
+							+ "calculator.html" + devModel);
+				}
+			}
+
+			public void onFailure(Throwable caught) {
+				Window.alert("server connect fail, please try again");
 			}
 		});
 	}

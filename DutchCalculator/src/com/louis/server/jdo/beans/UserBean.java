@@ -82,4 +82,13 @@ public class UserBean {
 			return false;
 		}
 	}
+	
+	public boolean applyGroupReject(String group){
+		if(applyGroupIDs.contains(group)){
+			applyGroupIDs.remove(group);
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

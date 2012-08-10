@@ -3,6 +3,7 @@ package com.louis.calculator.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.catalina.startup.HomesUserDatabase;
 import org.mortbay.log.Log;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -34,8 +35,8 @@ import com.louis.calculator.ui.ListItem;
 
 public class Calculator implements EntryPoint {
 
-//	private static String devModel = "?gwt.codesvr=127.0.0.1:9997";
-	 private static String devModel = "";
+	 private static String devModel = "?gwt.codesvr=127.0.0.1:9997";
+//	private static String devModel = "";
 
 	Label welcome = new Label();
 	CalculatorUserServiceAsync calculatorUserService = CalculatorServerProxy.getCalculatorServer();
@@ -366,7 +367,7 @@ public class Calculator implements EntryPoint {
 					clearGroupListActive();
 					((Anchor) event.getSource()).getParent().setStyleName("active");
 					groupTab.RefreshGroup(group, currentUser);
-					clickElement(RootPanel.get("groupHomeTabItem").getElement());
+					clickElement(groupTab.homePanel.homePanelLink.getElement());
 				}
 			});
 			RootPanel.get("groupList").add(item);

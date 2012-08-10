@@ -173,4 +173,15 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 			pm.close();
 		}
 	}
+
+	public Void userVerifyBill(String username, DutchBill bill) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try{
+			BillBean verifiedBill = pm.getObjectById(BillBean.class, bill.getBillNumber());
+			verifiedBill.userVerify(username);
+			return null;
+		}finally{
+			pm.close();
+		}
+	}
 }
