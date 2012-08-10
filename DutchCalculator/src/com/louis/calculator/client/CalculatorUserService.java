@@ -20,6 +20,7 @@ public interface CalculatorUserService extends RemoteService {
 	public Boolean joinGroup(String groupName, String username);
 	public GroupRelatedInfo getGroupAndBillsByName(String groupName, String username);
 	public Void ConfirmApplyUser(String groupname, String username);
+	public Void RejectApplyUser(String groupname, String username);
 	public Void createBill(DutchBill bill, DutchGroup group);
 	public List<DutchBill> getBills(List<String> billNames);
 	public Void userVerifyBill(String username, DutchBill bill);

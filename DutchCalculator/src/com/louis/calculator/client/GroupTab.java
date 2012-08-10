@@ -19,7 +19,8 @@ public class GroupTab {
 	GroupHomePanel homePanel = new GroupHomePanel();
 	GroupBillPanel billPanel = new  GroupBillPanel(this);
 	GroupAdminPanel adminPanel = new GroupAdminPanel(this);
-
+	
+	//TODO: add welcom panel (or help?)
 	
 	/*
 	 * order of refresh: 

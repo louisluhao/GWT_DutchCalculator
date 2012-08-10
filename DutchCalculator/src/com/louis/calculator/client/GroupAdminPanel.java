@@ -2,8 +2,6 @@ package com.louis.calculator.client;
 
 import java.util.List;
 
-import org.w3c.dom.Element;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -11,7 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -106,9 +103,9 @@ public class GroupAdminPanel {
 		if (currentGroup.getApplyUserlist().size() > 0) {
 			buildApplyListTableHeader();
 			buildApplyListTableByCurrentGroup();
-		}else{
+		} else {
 			applyListTable.setWidget(0, 0, applyListHeader);
-			applyListTable.setText(1, 0, "Current No Applied User");			
+			applyListTable.setText(1, 0, "Current No Applied User");
 		}
 	}
 
@@ -136,8 +133,8 @@ public class GroupAdminPanel {
 		confirmBtn.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 
-				calculatorUserService.ConfirmApplyUser(currentGroup.getGroupName(),
-						confirmUsername, new AsyncCallback<Void>() {
+				calculatorUserService.ConfirmApplyUser(currentGroup.getGroupName(), confirmUsername,
+						new AsyncCallback<Void>() {
 							public void onSuccess(Void result) {
 								groupTab.refreshUserAndGroup(currentUser.getUsername(), currentGroup.getGroupName());
 							}
@@ -159,9 +156,22 @@ public class GroupAdminPanel {
 		return rejectButton;
 	}
 
-	private void addClickHandlerToRejectButton(Button rejectButton, String rejectUsername) {
-		// TODO Auto-generated method stub
-		
+	private void addClickHandlerToRejectButton(Button rejectButton,final String rejectUsername) {
+		rejectButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				calculatorUserService.RejectApplyUser(currentGroup.getGroupName(),
+						rejectUsername, new AsyncCallback<Void>() {
+
+							public void onSuccess(Void result) {
+								groupTab.refreshUserAndGroup(currentUser.getUsername(), currentGroup.getGroupName());
+							}
+
+							public void onFailure(Throwable caught) {
+								Window.alert("SERVER CONNECT ERROR WHEN REJECT");
+							}
+						});
+			}
+		});
 	}
 
 }

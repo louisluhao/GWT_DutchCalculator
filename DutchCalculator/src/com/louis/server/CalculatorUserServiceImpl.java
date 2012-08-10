@@ -139,6 +139,20 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 			pm.close();
 		}
 	}
+	
+	public Void RejectApplyUser(String groupname, String username) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			GroupBean group = pm.getObjectById(GroupBean.class, groupname);
+			UserBean user = pm.getObjectById(UserBean.class, username);
+
+			group.rejectApplyUser(username);
+			user.applyGroupReject(groupname);
+			return null;
+		} finally {
+			pm.close();
+		}
+	}
 
 	public Void createBill(DutchBill bill, DutchGroup group) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -184,4 +198,6 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 			pm.close();
 		}
 	}
+
+
 }

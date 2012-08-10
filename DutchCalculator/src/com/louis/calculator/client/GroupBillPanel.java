@@ -109,6 +109,7 @@ public class GroupBillPanel {
 				billsTable.setText(row, 4, bill.getBillDate().toString());
 				billsTable.setText(row, 5, bill.getIncludePeoplesString());
 				billsTable.setText(row, 6, bill.getBillDetailNote());
+				//TODO: when note are too long ,show detail popup box
 				billsTable.setWidget(row, 7, getBillVerifyBtn(bill));
 				billsTable.setText(row, 8, bill.getUnverifyUsersString());
 				row++;

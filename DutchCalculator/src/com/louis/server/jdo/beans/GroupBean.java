@@ -90,6 +90,15 @@ public class GroupBean {
 		}
 	}
 	
+	public boolean rejectApplyUser(String username){
+		if(applyUserList.contains(username)){
+			applyUserList.remove(username);
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	public boolean addBill(String billNumber){
 		if(billList.contains(billNumber)){
 			return false;

@@ -189,7 +189,6 @@ public class BillPopUpPanel {
 		bill.setCreatUser(username);
 		bill.setIncludePeoples(getSelectedUsers());
 		bill.setBillDetailNote(billDetailNote.getText());
-		Window.alert(billDetailNote.getText());
 		calculatorUserService.createBill(bill, group, new AsyncCallback<Void>() {
 
 			public void onSuccess(Void result) {

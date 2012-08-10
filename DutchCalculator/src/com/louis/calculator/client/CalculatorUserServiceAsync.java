@@ -30,9 +30,12 @@ public interface CalculatorUserServiceAsync {
 
 	public void ConfirmApplyUser(String groupname, String username, AsyncCallback<Void> async);
 	
+	public void RejectApplyUser(String groupname, String username, AsyncCallback<Void> async);
+	
 	public void createBill(DutchBill bill, DutchGroup group, AsyncCallback<Void> async);
 	
 	public void getBills(List<String> billNames, AsyncCallback<List<DutchBill>> async);
 	
 	public void userVerifyBill(String username, DutchBill bill, AsyncCallback<Void> async);
+	
 }
