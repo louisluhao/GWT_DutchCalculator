@@ -14,52 +14,52 @@ import com.louis.calculator.beans.DutchUser;
 public class GroupHomePanel {
 	DutchGroup currentGroup;
 	DutchUser currentUser;
-	
+
 	CalculatorUserServiceAsync calculatorUserService = CalculatorServerProxy.getCalculatorServer();
 	/*
 	 * no group show
 	 */
-	
-	
+
 	/*
 	 * Group Home Panel
 	 */
 	Label groupTitle = new Label();
 	FlexTable groupUserListTable = new FlexTable();
 	Label groupUserListTableHeader = new Label("Group User List");
-	
+
 	public GroupHomePanel() {
-		groupUserListTable.setStyleName("table table-striped");
+		groupUserListTable.setStyleName("table table-striped table-bordered");
 		groupUserListTableHeader.setStyleName("listheader");
 		RootPanel.get("groupTitle").add(groupTitle);
-		RootPanel.get("groupUserListTable").add(groupUserListTable);
 	}
-	
-	public void RefreshGroup(DutchGroup currentGroup, DutchUser currentUser){
+
+	public void RefreshGroup(DutchGroup currentGroup, DutchUser currentUser) {
 		this.currentGroup = currentGroup;
 		this.currentUser = currentUser;
 		refreshPanel();
 	}
-	
+
 	protected void refreshPanel() {
-		setupGroupUserListTable();
-	}
-
-
-	private void setupGroupUserListTable(){
-		if(currentGroup!=null && currentGroup.getUserList()!=null){
-			groupTitle.setText(currentGroup.getGroupName());
-			groupUserListTable.removeAllRows();
-			groupUserListTable.setWidget(0, 0, groupUserListTableHeader);
-			List<String> userList = currentGroup.getUserList();
-			int row = 1;
-			for(String user : userList){
-				groupUserListTable.setText(row, 0, user);
-				row++;
-			}
+		if (currentGroup != null && currentGroup.getUserList() != null) {
+			setupGroupUserListTable();
+		} else {
+			RootPanel.get("groupUserListTable").clear();
 		}
 	}
-	
-	
-	
+
+	private void setupGroupUserListTable() {
+
+		groupTitle.setText(currentGroup.getGroupName());
+		groupUserListTable.removeAllRows();
+		groupUserListTable.setWidget(0, 0, groupUserListTableHeader);
+		List<String> userList = currentGroup.getUserList();
+		int row = 1;
+		for (String user : userList) {
+			groupUserListTable.setText(row, 0, user);
+			row++;
+		}
+		RootPanel.get("groupUserListTable").add(groupUserListTable);
+
+	}
+
 }

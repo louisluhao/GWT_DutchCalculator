@@ -1,10 +1,13 @@
 package com.louis.calculator.client;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.louis.calculator.beans.DutchBill;
 import com.louis.calculator.beans.DutchUser;
 import com.louis.calculator.beans.DutchGroup;
+import com.louis.calculator.beans.GroupRelatedInfo;
 
 public interface CalculatorUserServiceAsync {
 	public void checkUserLogin(AsyncCallback<DutchUser> async);
@@ -23,7 +26,11 @@ public interface CalculatorUserServiceAsync {
 	
 	public void joinGroup(String groupName, String username, AsyncCallback<Boolean> async);
 	
-	public void getGroupByName(String groupName,String username, AsyncCallback<DutchGroup> async);
+	public void getGroupAndBillsByName(String groupName,String username, AsyncCallback<GroupRelatedInfo> async);
 
 	public void ConfirmApplyUser(String groupname, String username, AsyncCallback<Void> async);
+	
+	public void createBill(DutchBill bill, DutchGroup group, AsyncCallback<Void> async);
+	
+	public void getBills(List<String> billNames, AsyncCallback<List<DutchBill>> async);
 }

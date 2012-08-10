@@ -89,4 +89,13 @@ public class GroupBean {
 			return false;
 		}
 	}
+	
+	public boolean addBill(String billNumber){
+		if(billList.contains(billNumber)){
+			return false;
+		}else{
+			billList.add(billNumber);
+			return true;
+		}
+	}
 }

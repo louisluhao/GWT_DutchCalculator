@@ -1,25 +1,38 @@
 package com.louis.calculator.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.louis.calculator.beans.DutchBill;
 import com.louis.calculator.beans.DutchGroup;
 import com.louis.calculator.beans.DutchUser;
+import com.louis.calculator.beans.GroupRelatedInfo;
 
 public class GroupTab {
 	DutchGroup currentGroup;
 	DutchUser currentUser;
+	List<DutchBill> currentBills;
 
 	CalculatorUserServiceAsync calculatorUserService = CalculatorServerProxy.getCalculatorServer();
 
-	GroupHomePanel groupHomePanel = new GroupHomePanel();
+	GroupHomePanel homePanel = new GroupHomePanel();
+	GroupBillPanel billPanel = new  GroupBillPanel(this);
 	GroupAdminPanel adminPanel = new GroupAdminPanel(this);
 
+	
+	/*
+	 * order of refresh: 
+	 * Group -> Bills -> User
+	 */
+	
 	public void RefreshGroup(String group, DutchUser currentUser) {
 		this.currentUser = currentUser;
-		calculatorUserService.getGroupByName(group, currentUser.getUsername(), new AsyncCallback<DutchGroup>() {
+		calculatorUserService.getGroupAndBillsByName(group, currentUser.getUsername(), new AsyncCallback<GroupRelatedInfo>() {
 
-			public void onSuccess(DutchGroup result) {
-				currentGroup = result;
+			public void onSuccess(GroupRelatedInfo result) {
+				currentGroup = result.getGroup();
+				currentBills = result.getBills();
 				refreshPanels();
 			}
 
@@ -29,11 +42,12 @@ public class GroupTab {
 		});
 	}
 	
-	public void refreshUserAndGroup(final String username, String groupname){
-		calculatorUserService.getGroupByName(groupname, username, new AsyncCallback<DutchGroup>() {
+	public void refreshUserAndGroup(final String username, final String groupname){
+		calculatorUserService.getGroupAndBillsByName(groupname, username, new AsyncCallback<GroupRelatedInfo>() {
 
-			public void onSuccess(DutchGroup result) {
-				currentGroup = result;
+			public void onSuccess(GroupRelatedInfo result) {
+				currentGroup = result.getGroup();
+				currentBills = result.getBills();
 				refreshUser(username);
 			}
 
@@ -58,7 +72,8 @@ public class GroupTab {
 	}
 
 	protected void refreshPanels() {
-		groupHomePanel.RefreshGroup(currentGroup, currentUser);
+		homePanel.RefreshGroup(currentGroup, currentUser);
+		billPanel.RefreshGroup(currentGroup, currentUser, currentBills);
 		adminPanel.RefreshGroup(currentGroup, currentUser);
 	}
 }

@@ -34,8 +34,8 @@ import com.louis.calculator.ui.ListItem;
 
 public class Calculator implements EntryPoint {
 
-	private static String devModel = "?gwt.codesvr=127.0.0.1:9997";
-//	private static String devModel = "";
+//	private static String devModel = "?gwt.codesvr=127.0.0.1:9997";
+	 private static String devModel = "";
 
 	Label welcome = new Label();
 	CalculatorUserServiceAsync calculatorUserService = CalculatorServerProxy.getCalculatorServer();
@@ -110,8 +110,11 @@ public class Calculator implements EntryPoint {
 	}
 
 	private void buildNavBar() {
+		RootPanel.get("nav-user").getElement()
+				.setInnerHTML("<i class=\"icon-user icon-white\"></i>" + currentUser.getUsername());
+
 		RootPanel.get("welcome").add(welcome);
-		welcome.setText("log out" + currentUser.getUsername());
+		welcome.getElement().setInnerHTML("<i class=\"icon-off icon-white\"></i>Log out");
 
 		welcome.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -342,10 +345,6 @@ public class Calculator implements EntryPoint {
 		});
 	}
 
-	private native void clickElement(Element elem) /*-{
-		elem.click();
-	}-*/;
-
 	private void registerGroupNameRecover() {
 		registerGroupNameBox.setText("");
 		registerGroupNameTip.setText("");
@@ -411,5 +410,9 @@ public class Calculator implements EntryPoint {
 			}
 		});
 	}
+
+	private native void clickElement(Element elem) /*-{
+		elem.click();
+	}-*/;
 
 }

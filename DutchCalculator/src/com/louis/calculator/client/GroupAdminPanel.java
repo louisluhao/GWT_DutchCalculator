@@ -53,7 +53,7 @@ public class GroupAdminPanel {
 		anchor.getElement().setAttribute("href", "#adminPanel");
 		anchor.getElement().setAttribute("class", "dropdown-toggle");
 		anchor.getElement().setAttribute("data-toggle", "tab");
-		anchor.setHTML("<i class=\"icon-eye-open\"></i>Admin");
+		anchor.setHTML("<i class=\"icon-eye-open\"></i> Admin");
 		return anchor;
 	}
 

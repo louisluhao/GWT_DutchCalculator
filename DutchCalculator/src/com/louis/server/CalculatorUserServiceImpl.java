@@ -1,6 +1,5 @@
 package com.louis.server;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.louis.calculator.beans.DutchBill;
 import com.louis.calculator.beans.DutchUser;
 import com.louis.calculator.beans.DutchGroup;
+import com.louis.calculator.beans.GroupRelatedInfo;
 import com.louis.calculator.client.CalculatorUserService;
+import com.louis.server.jdo.beans.BillBean;
 import com.louis.server.jdo.beans.GroupBean;
 import com.louis.server.jdo.beans.PMF;
 import com.louis.server.jdo.beans.UserBean;
@@ -36,8 +38,8 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 		} else {
 			return new DutchUser(false, "");
 		}
-	}	
-	
+	}
+
 	public Void logout() {
 		HttpServletRequest request = this.getThreadLocalRequest();
 		HttpSession session = request.getSession();
@@ -47,20 +49,19 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 
 	public Boolean ifGroupExist(String groupname) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try{
+		try {
 			pm.getObjectById(GroupBean.class, groupname);
 			return true;
-		}catch(JDOObjectNotFoundException e){
+		} catch (JDOObjectNotFoundException e) {
 			return false;
-		}finally{
+		} finally {
 			pm.close();
 		}
 	}
 
 	public Boolean addGroupToCurrentUser(DutchGroup newgroup) {
 		String username = newgroup.getAdminUserList().get(0);
-		if (DBHelper.UserAddGroup(username, newgroup.getGroupName())
-				&& DBHelper.addNewGroup(newgroup)) {
+		if (DBHelper.UserAddGroup(username, newgroup.getGroupName()) && DBHelper.addNewGroup(newgroup)) {
 			return true;
 		} else {
 			return false;
@@ -68,12 +69,12 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public ArrayList<String> searchGroupByName(String groupName) {
-		PersistenceManager pm= PMF.get().getPersistenceManager();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery("select groupName from " + GroupBean.class.getName());
 		List<String> groupNames = (List<String>) query.execute();
 		ArrayList<String> returnList = new ArrayList<String>();
-		for(String name : groupNames){
-			if(name.contains(groupName)){
+		for (String name : groupNames) {
+			if (name.contains(groupName)) {
 				returnList.add(name);
 			}
 		}
@@ -81,58 +82,95 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public Boolean joinGroup(String groupName, String username) {
-		PersistenceManager pm= PMF.get().getPersistenceManager();
-		try{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
 			GroupBean group = pm.getObjectById(GroupBean.class, groupName);
 			UserBean user = pm.getObjectById(UserBean.class, username);
-			if(group.addApplyUser(username) && user.addApplyGroup(groupName)){
+			if (group.addApplyUser(username) && user.addApplyGroup(groupName)) {
 				return true;
-			}else{
+			} else {
 				return false;
 			}
-		}
-		finally{
+		} finally {
 			pm.close();
 		}
 	}
 
-	public DutchGroup getGroupByName(String groupName, String username) {
+	public GroupRelatedInfo getGroupAndBillsByName(String groupName, String username) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try{
+		try {
+			GroupRelatedInfo returnInfo = new GroupRelatedInfo();
 			GroupBean group = pm.getObjectById(GroupBean.class, groupName);
-			if(group.getUserList().contains(username)){
-				DutchGroup returnGroup = new DutchGroup(group.getGroupName());
-				returnGroup.setAdminUserList(group.getAdminUserList());
-				returnGroup.setApplyUserlist(group.getApplyUserList());
-				returnGroup.setBillList(group.getBillList());
-				returnGroup.setUserList(group.getUserList());
-				return returnGroup;
-			}else{
+			if (group.getUserList().contains(username)) {
+				DutchGroup dutchGroup = new DutchGroup(group.getGroupName());
+				dutchGroup.setAdminUserList(group.getAdminUserList());
+				dutchGroup.setApplyUserlist(group.getApplyUserList());
+				dutchGroup.setBillList(group.getBillList());
+				dutchGroup.setUserList(group.getUserList());
+				returnInfo.setGroup(dutchGroup);
+
+				for (String billName : dutchGroup.getBillList()) {
+					BillBean bill = pm.getObjectById(BillBean.class, billName);
+					returnInfo.addBills(bill.toDutchBill());
+				}
+
+				return returnInfo;
+			} else {
 				return null;
-			}	
-		}
-		catch (JDOObjectNotFoundException e) {
-			return new DutchGroup();
-		}finally{
+			}
+		} catch (JDOObjectNotFoundException e) {
+			return null;
+		} finally {
 			pm.close();
 		}
-		
+
 	}
 
 	public Void ConfirmApplyUser(String groupname, String username) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try{
-			GroupBean group = pm.getObjectById(GroupBean.class,groupname);
+		try {
+			GroupBean group = pm.getObjectById(GroupBean.class, groupname);
 			UserBean user = pm.getObjectById(UserBean.class, username);
 
 			group.confirmApplyUser(username);
 			user.applyGroupConfirm(groupname);
 			return null;
-		}finally{
+		} finally {
 			pm.close();
 		}
 	}
 
+	public Void createBill(DutchBill bill, DutchGroup group) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			BillBean newBill = new BillBean(group.getGroupName() + "-"
+					+ String.valueOf(group.getBillList().size() + 1));
+			newBill.setBillAmount(bill.getBillAmount());
+			newBill.setBillDate((long) 0);
+			newBill.setBillDetailNote(bill.getBillDetailNote());
+			newBill.setCreatUser(bill.getCreatUser());
+			newBill.setIncludePeoples(bill.getIncludePeoples());
+			newBill.setBillTitle(bill.getBillTitle());
+			GroupBean updateGroup = pm.getObjectById(GroupBean.class, group.getGroupName());
+			updateGroup.addBill(newBill.getBillNumber());
+			pm.makePersistent(newBill);
+			return null;
+		} finally {
+			pm.close();
+		}
+	}
 
-
+	public List<DutchBill> getBills(List<String> billNames) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<DutchBill> dutchBills = new ArrayList<DutchBill>();
+		try{
+			for(String billName : billNames){
+				BillBean bill = pm.getObjectById(BillBean.class, billName);
+				dutchBills.add(bill.toDutchBill());
+			}
+			return dutchBills;
+		}finally{
+			pm.close();
+		}
+	}
 }
