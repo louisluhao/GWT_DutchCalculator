@@ -74,7 +74,7 @@ public class GroupBillPanel {
 
 	private void createBillBtn() {
 		createBill = new Anchor();
-		createBill.setHTML("<i class=\"icon-tag icon-white\"></i>Greate Bill");
+		createBill.setHTML("<i class=\"icon-tag icon-white\"></i>Create Bill");
 		createBill.setStyleName("btn btn-primary");
 		createBill.getElement().setAttribute("data-toggle", "modal");
 		createBill.getElement().setAttribute("href", "#billPopUp");
@@ -177,7 +177,7 @@ public class GroupBillPanel {
 	}
 
 	private Widget getDeleteBtn(final DutchBill bill) {
-		if (bill.getCreatUser().equals(currentUser.getUsername())) {
+		if (bill.getCreatUser().equals(currentUser.getUsername()) && !bill.isValid()) {
 			Anchor delete = new Anchor("Delete");
 			delete.setStyleName("btn btn-danger btn-mini");
 			delete.addClickHandler(new ClickHandler() {
