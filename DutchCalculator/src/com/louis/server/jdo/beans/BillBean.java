@@ -36,6 +36,9 @@ public class BillBean {
 
 	@Persistent
 	private String billDetailNote;
+	
+	@Persistent
+	private Boolean isDeleted = false;
 
 	public BillBean(String billNumber) {
 		this.billNumber = billNumber;
@@ -107,6 +110,7 @@ public class BillBean {
 		bill.setCreatUser(creatUser);
 		bill.setIncludePeoples(getIncludePeoples());
 		bill.setVerifidPeoples(getVerifidPeoples());
+		bill.setDeleted(isDeleted);
 		return bill;
 	}
 
@@ -124,4 +128,12 @@ public class BillBean {
 		}
 	}
 
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+	
 }

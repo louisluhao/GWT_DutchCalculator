@@ -30,8 +30,8 @@ import com.louis.calculator.ui.ListItem;
 
 public class Calculator implements EntryPoint {
 
-	 private static String devModel = "?gwt.codesvr=127.0.0.1:9997";
-//	private static String devModel = "";
+//	private static String devModel = "?gwt.codesvr=127.0.0.1:9997";
+	 private static String devModel = "";
 
 	Label welcome = new Label();
 	CalculatorUserServiceAsync calculatorUserService = CalculatorServerProxy.getCalculatorServer();

@@ -1,7 +1,5 @@
 package com.louis.login.client;
 
-import org.apache.tools.ant.taskdefs.condition.IsReachable;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -28,8 +26,8 @@ import com.louis.login.beans.LoginInfo.LoginState;
 
 public class LoginPanel implements EntryPoint {
 
-	private String devModel = "?gwt.codesvr=127.0.0.1:9997";
-//	private String devModel = "";
+//	private String devModel = "?gwt.codesvr=127.0.0.1:9997";
+	 private String devModel = "";
 
 	TextBox usernameBox = new TextBox();
 	PasswordTextBox passwordBox = new PasswordTextBox();
@@ -105,11 +103,11 @@ public class LoginPanel implements EntryPoint {
 				registerPswCopyBoxCheck();
 			}
 		});
-		
+
 		registerPswCopyBox.addKeyPressHandler(new KeyPressHandler() {
-			
+
 			public void onKeyPress(KeyPressEvent event) {
-				if(event.getCharCode() == KeyCodes.KEY_ENTER){
+				if (event.getCharCode() == KeyCodes.KEY_ENTER) {
 					registerFlag = true;
 					registerCheck();
 				}
@@ -137,11 +135,11 @@ public class LoginPanel implements EntryPoint {
 				loginUser();
 			}
 		});
-		
+
 		passwordBox.addKeyPressHandler(new KeyPressHandler() {
-			
+
 			public void onKeyPress(KeyPressEvent event) {
-				if(event.getCharCode() == KeyCodes.KEY_ENTER){
+				if (event.getCharCode() == KeyCodes.KEY_ENTER) {
 					loginUser();
 				}
 			}
@@ -149,8 +147,7 @@ public class LoginPanel implements EntryPoint {
 	}
 
 	protected void loginUser() {
-		DutchUser user = new DutchUser(usernameBox.getText(),
-				passwordBox.getText());
+		DutchUser user = new DutchUser(usernameBox.getText(), passwordBox.getText());
 		userServiceAsync.login(user, new AsyncCallback<LoginInfo>() {
 
 			public void onSuccess(LoginInfo result) {
@@ -159,8 +156,7 @@ public class LoginPanel implements EntryPoint {
 				} else if (result.getLoginState() == LoginState.PassWordWrong) {
 					Window.alert("password wrong!");
 				} else if (result.getLoginState() == LoginState.Success) {
-					Window.Location.replace(GWT.getHostPageBaseURL()
-							+ "calculator.html" + devModel);
+					Window.Location.replace(GWT.getHostPageBaseURL() + "calculator.html" + devModel);
 				}
 			}
 
@@ -171,26 +167,21 @@ public class LoginPanel implements EntryPoint {
 	}
 
 	protected void registerUser() {
-		DutchUser newUser = new DutchUser(registerUsernameBox
-				.getText(), registerPswBox.getText());
-		userServiceAsync.RegisterUser(newUser,
-				new AsyncCallback<Boolean>() {
+		DutchUser newUser = new DutchUser(registerUsernameBox.getText(), registerPswBox.getText());
+		userServiceAsync.RegisterUser(newUser, new AsyncCallback<Boolean>() {
 
-					public void onSuccess(Boolean result) {
-						clickElement(DOM
-								.getElementById("closeRegisterButton"));
-						usernameBox.setText(registerUsernameBox
-								.getText());
-						passwordBox.setText(registerPswBox
-								.getText());
-						clearRegisterPanel();
-						loginButton.click();
-					}
+			public void onSuccess(Boolean result) {
+				clickElement(DOM.getElementById("closeRegisterButton"));
+				usernameBox.setText(registerUsernameBox.getText());
+				passwordBox.setText(registerPswBox.getText());
+				clearRegisterPanel();
+				loginButton.click();
+			}
 
-					public void onFailure(Throwable caught) {
-						Window.alert("server connect fail, please try again!");
-					}
-				});
+			public void onFailure(Throwable caught) {
+				Window.alert("server connect fail, please try again!");
+			}
+		});
 	}
 
 	private void clearRegisterPanel() {
@@ -218,36 +209,30 @@ public class LoginPanel implements EntryPoint {
 
 	protected void registerPswCopyBoxCheck() {
 		if (!registerPswCopyBox.getText().equals(registerPswBox.getText())) {
-			registerPswCopyTip
-					.setText("The re-entered password is not same as password");
-			RootPanel.get("registerPswCopyGroup").setStyleName(
-					"control-group error");
+			registerPswCopyTip.setText("The re-entered password is not same as password");
+			RootPanel.get("registerPswCopyGroup").setStyleName("control-group error");
 			registerFlag = false;
 		} else {
 			registerPswCopyTip.setText("");
-			RootPanel.get("registerPswCopyGroup").setStyleName(
-					"control-group success");
+			RootPanel.get("registerPswCopyGroup").setStyleName("control-group success");
 		}
 	}
 
 	protected void registerPswBoxCheck() {
 		if (registerPswBox.getText().length() < 6) {
 			registerPswTip.setText("password length must bigger than 6");
-			RootPanel.get("registerPswGroup").setStyleName(
-					"control-group error");
+			RootPanel.get("registerPswGroup").setStyleName("control-group error");
 			registerFlag = false;
 		} else {
 			registerPswTip.setText("");
-			RootPanel.get("registerPswGroup").setStyleName(
-					"control-group success");
+			RootPanel.get("registerPswGroup").setStyleName("control-group success");
 		}
 	}
 
 	protected void registerUsernameBoxCheckIsRigister(final boolean isRigister) {
 		if (registerUsernameBox.getText().length() == 0) {
 			registerUsernameTip.setText("must input username");
-			RootPanel.get("registerUsernameGroup").setStyleName(
-					"control-group error");
+			RootPanel.get("registerUsernameGroup").setStyleName("control-group error");
 			registerFlag = false;
 			return;
 		}
@@ -257,16 +242,13 @@ public class LoginPanel implements EntryPoint {
 
 					public void onSuccess(Boolean result) {
 						if (result == true) {
-							registerUsernameTip
-									.setText("username already exist, please try other name");
-							RootPanel.get("registerUsernameGroup")
-									.setStyleName("control-group error");
+							registerUsernameTip.setText("username already exist, please try other name");
+							RootPanel.get("registerUsernameGroup").setStyleName("control-group error");
 							registerFlag = false;
 							return;
 						} else {
 							registerUsernameTip.setText("");
-							RootPanel.get("registerUsernameGroup")
-									.setStyleName("control-group success");
+							RootPanel.get("registerUsernameGroup").setStyleName("control-group success");
 							if (registerFlag && isRigister) {
 								registerUser();
 							}

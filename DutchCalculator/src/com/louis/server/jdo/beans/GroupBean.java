@@ -107,4 +107,8 @@ public class GroupBean {
 			return true;
 		}
 	}
+	
+	public boolean removeBill(String billName){
+		return billList.remove(billName);
+	}
 }

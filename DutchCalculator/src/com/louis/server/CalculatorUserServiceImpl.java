@@ -160,7 +160,7 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 			BillBean newBill = new BillBean(group.getGroupName() + "-"
 					+ String.valueOf(group.getBillList().size() + 1));
 			newBill.setBillAmount(bill.getBillAmount());
-			newBill.setBillDate((long) 0);
+			newBill.setBillDate(bill.getBillDate());
 			newBill.setBillDetailNote(bill.getBillDetailNote());
 			newBill.setCreatUser(bill.getCreatUser());
 			newBill.setIncludePeoples(bill.getIncludePeoples());
@@ -193,6 +193,17 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 		try{
 			BillBean verifiedBill = pm.getObjectById(BillBean.class, bill.getBillNumber());
 			verifiedBill.userVerify(username);
+			return null;
+		}finally{
+			pm.close();
+		}
+	}
+
+	public Void deteleBill(String billNumber, String groupName) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try{
+			BillBean bill = pm.getObjectById(BillBean.class, billNumber);
+			bill.setIsDeleted(true);
 			return null;
 		}finally{
 			pm.close();

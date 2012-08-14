@@ -3,8 +3,6 @@ package com.louis.calculator.beans;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.Persistent;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class DutchBill implements IsSerializable {
@@ -24,6 +22,8 @@ public class DutchBill implements IsSerializable {
 	private Set<String> verifidPeoples = new HashSet<String>();
 
 	private String billDetailNote;
+	
+	private Boolean isDeleted;
 
 	public DutchBill() {
 
@@ -139,6 +139,14 @@ public class DutchBill implements IsSerializable {
 
 	public boolean isValid() {
 		return includePeoples.size() == verifidPeoples.size();
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 }

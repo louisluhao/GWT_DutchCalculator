@@ -38,4 +38,6 @@ public interface CalculatorUserServiceAsync {
 	
 	public void userVerifyBill(String username, DutchBill bill, AsyncCallback<Void> async);
 	
+	public void deteleBill(String billName, String groupName, AsyncCallback<Void> async);
+	
 }

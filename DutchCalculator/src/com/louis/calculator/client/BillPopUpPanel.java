@@ -1,9 +1,11 @@
 package com.louis.calculator.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -23,6 +25,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.user.datepicker.client.DatePicker;
 import com.louis.calculator.beans.DutchBill;
 import com.louis.calculator.beans.DutchGroup;
 
@@ -42,7 +46,7 @@ public class BillPopUpPanel {
 	VerticalPanel billPanel = new VerticalPanel();
 	TextBox billTitle = new TextBox();
 	TextBox billAmount = new TextBox();
-	TextBox billDate = new TextBox();
+	DatePicker billDate = new DatePicker();
 	TextArea billDetailNote = new TextArea();
 	FlexTable includeUserTable = new FlexTable();
 
@@ -60,22 +64,30 @@ public class BillPopUpPanel {
 	}
 
 	private void buildPanel() {
-		billPanel.add(new Label("Title"));
+		billPanel.add(getBoldFontLabel("Title"));
 		billPanel.add(billTitle);
-		billPanel.add(new Label("Amount"));
+		billPanel.add(getBoldFontLabel("Amount"));
 		billPanel.add(billAmount);
-		billPanel.add(new Label("Bill Date"));
+		billPanel.add(getBoldFontLabel("Bill Date"));
+		
+		billDate.setValue(new Date());
 		billPanel.add(billDate);
-		billPanel.add(new Label("Relative User"));
+		billPanel.add(getBoldFontLabel("Relative User"));
 
 		HorizontalPanel includeUserTablePanel = new HorizontalPanel();
 		includeUserTablePanel.add(includeUserTable);
 		billPanel.add(includeUserTablePanel);
-		includeUserTable.setStyleName("table table-striped");
+//		includeUserTable.setStyleName("table");
 
-		billPanel.add(new Label("Note"));
+		billPanel.add(getBoldFontLabel("Note"));
 		billPanel.add(billDetailNote);
 
+	}
+	
+	private Label getBoldFontLabel(String text){
+		Label label = new Label(text);
+		label.setStyleName("listheader");
+		return label;
 	}
 
 	private void attachToRootPanel() {
@@ -103,9 +115,11 @@ public class BillPopUpPanel {
 		includeUserTable.removeAllRows();
 		int row = 1;
 		for (String username : group.getUserList()) {
-			CheckBox userCheckBox = new CheckBox(username);
+			CheckBox userCheckBox = new CheckBox();
+			userCheckBox.setName(username);
 			includeUserCheckBoxList.add(userCheckBox);
 			includeUserTable.setWidget(row, 0, userCheckBox);
+			includeUserTable.setText(row, 1, username);
 			row++;
 		}
 	}
@@ -162,7 +176,7 @@ public class BillPopUpPanel {
 		if (!isCheckBillAmountBoxPass()) {
 			return false;
 		}
-		if (billDate.getText().length() == 0) {
+		if (billDate.getValue() == null) {
 			return false;
 		}
 		if (getSelectedUsers().size() == 0) {
@@ -175,7 +189,7 @@ public class BillPopUpPanel {
 		Set<String> selectedUsers = new HashSet<String>();
 		for (CheckBox checkbox : includeUserCheckBoxList) {
 			if (checkbox.getValue() == true) {
-				selectedUsers.add(checkbox.getText());
+				selectedUsers.add(checkbox.getName());
 			}
 		}
 		return selectedUsers;
@@ -185,7 +199,7 @@ public class BillPopUpPanel {
 		DutchBill bill = new DutchBill();
 		bill.setBillTitle(billTitle.getText());
 		bill.setBillAmount(Double.valueOf(billAmount.getText()));
-		bill.setBillDate((long) 0);// TODO:Add date picker!
+		bill.setBillDate(billDate.getValue().getTime());
 		bill.setCreatUser(username);
 		bill.setIncludePeoples(getSelectedUsers());
 		bill.setBillDetailNote(billDetailNote.getText());
@@ -210,7 +224,7 @@ public class BillPopUpPanel {
 	protected void clearPopUpPanel() {
 		billTitle.setText("");
 		billAmount.setText("");
-		billDate.setText("");
+		billDate.setValue(new Date());
 		billDetailNote.setText("");
 		billPopUpTitle.setText("");
 		includeUserTable.removeAllRows();

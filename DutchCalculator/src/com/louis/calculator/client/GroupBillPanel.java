@@ -2,6 +2,8 @@ package com.louis.calculator.client;
 
 import static com.louis.calculator.client.ui.component.ListHeader.getTableHeader;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -11,8 +13,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.louis.calculator.beans.DutchBill;
@@ -28,13 +32,16 @@ public class GroupBillPanel {
 
 	Anchor billPanelLink;
 	boolean isLinkVisible = false;
+	boolean isShowVerifiedBill = false;
 
 	VerticalPanel billPanel = new VerticalPanel();
+	HorizontalPanel btnPanel = new HorizontalPanel();
 	Anchor createBill;
+	Anchor switchShowValidBill = new Anchor();
 	FlexTable billsTable = new FlexTable();
 
 	BillPopUpPanel billPopUpPanel = new BillPopUpPanel(this);
-	
+
 	CalculatorUserServiceAsync calculatorUserService = CalculatorServerProxy.getCalculatorServer();
 
 	public GroupBillPanel(GroupTab parent) {
@@ -48,8 +55,12 @@ public class GroupBillPanel {
 
 	private void buildBillPanel() {
 		createBillBtn();
+		setupSwitchShowValidBill();
+		addListenerToSwitchValidBill();
 		setupBillsTable();
-		billPanel.add(createBill);
+		billPanel.add(btnPanel);
+		btnPanel.add(createBill);
+		btnPanel.add(switchShowValidBill);
 		billPanel.add(billsTable);
 	}
 
@@ -75,6 +86,27 @@ public class GroupBillPanel {
 		});
 	}
 
+	private void setupSwitchShowValidBill() {
+		if (isShowVerifiedBill) {
+			switchShowValidBill.setText("Only Show Unvalid Bill");
+			switchShowValidBill.setStyleName("btn btn-success");
+		} else {
+			switchShowValidBill.setText("Show Valid Bill");
+			switchShowValidBill.setStyleName("btn btn-success");
+		}
+	}
+
+	private void addListenerToSwitchValidBill() {
+		switchShowValidBill.addClickHandler(new ClickHandler() {
+
+			public void onClick(ClickEvent event) {
+				isShowVerifiedBill = !isShowVerifiedBill;
+				setupSwitchShowValidBill();
+				buildBillListTable();
+			}
+		});
+	}
+
 	private void setupBillsTable() {
 		billsTable.setStyleName("table table-striped table-bordered");
 	}
@@ -95,30 +127,6 @@ public class GroupBillPanel {
 		}
 	}
 
-	private void buildBillListTable() {
-		billsTable.removeAllRows();
-		if (currentBills.size() > 0) {
-			buildBillTableHeader();
-			int row = 1;
-			for (int i = currentBills.size() -1; i >=0 ; i--) {
-				DutchBill bill = currentBills.get(i);
-				billsTable.setWidget(row, 0, getValidStatusLabel(bill.isValid()));
-				billsTable.setText(row, 1, bill.getBillTitle());
-				billsTable.setText(row, 2, "$" + bill.getBillAmount());
-				billsTable.setText(row, 3, bill.getCreatUser());
-				billsTable.setText(row, 4, bill.getBillDate().toString());
-				billsTable.setText(row, 5, bill.getIncludePeoplesString());
-				billsTable.setText(row, 6, bill.getBillDetailNote());
-				//TODO: when note are too long ,show detail popup box
-				billsTable.setWidget(row, 7, getBillVerifyBtn(bill));
-				billsTable.setText(row, 8, bill.getUnverifyUsersString());
-				row++;
-			}
-		} else {
-			billsTable.setWidget(0, 0, getTableHeader("Current No Bills"));
-		}
-	}
-
 	private void buildBillTableHeader() {
 		billsTable.setWidget(0, 0, getTableHeader("Valid Status"));
 		billsTable.setWidget(0, 1, getTableHeader("Bill Title"));
@@ -129,20 +137,115 @@ public class GroupBillPanel {
 		billsTable.setWidget(0, 6, getTableHeader("Bill Note"));
 		billsTable.setWidget(0, 7, getTableHeader("Verify Bill"));
 		billsTable.setWidget(0, 8, getTableHeader("Unverified User"));
+		billsTable.setWidget(0, 9, getTableHeader("Modify Bill"));
 	}
-	
+
+	private void buildBillListTable() {
+		billsTable.removeAllRows();
+		if (currentBills.size() > 0) {
+			buildBillTableHeader();
+			int row = 1;
+			for (int i = currentBills.size() - 1; i >= 0; i--) {
+				DutchBill bill = currentBills.get(i);
+				if (!bill.getIncludePeoples().contains(currentUser.getUsername())
+						&& !bill.getCreatUser().equals(currentUser.getUsername())) {
+					continue;
+				}
+				if (!isShowVerifiedBill && bill.isValid()) {
+					continue;
+				}
+				if(bill.isDeleted()){
+					continue;
+				}
+				billsTable.setWidget(row, 0, getValidStatusLabel(bill.isValid()));
+				billsTable.setText(row, 1, bill.getBillTitle());
+				billsTable.setText(row, 2, "$" + bill.getBillAmount());
+				billsTable.setText(row, 3, bill.getCreatUser());
+				Date date = new Date(bill.getBillDate());
+				billsTable.setText(row, 4, date.getMonth() + "/" + date.getDay() + "/"
+						+ (date.getYear() + 1900));
+				billsTable.setText(row, 5, bill.getIncludePeoplesString());
+				billsTable.setWidget(row, 6, getBillNoteWrapper(bill));
+				billsTable.setWidget(row, 7, getBillVerifyBtn(bill));
+				billsTable.setText(row, 8, bill.getUnverifyUsersString());
+				billsTable.setWidget(row, 9, getDeleteBtn(bill));
+				row++;
+			}
+		} else {
+			billsTable.setWidget(0, 0, getTableHeader("Current No Bills"));
+		}
+	}
+
+	private Widget getDeleteBtn(final DutchBill bill) {
+		if (bill.getCreatUser().equals(currentUser.getUsername())) {
+			Anchor delete = new Anchor("Delete");
+			delete.setStyleName("btn btn-danger btn-mini");
+			delete.addClickHandler(new ClickHandler() {
+
+				public void onClick(ClickEvent event) {
+					boolean isSure = Window.confirm("Do you really want to delete this bill?");
+					if (isSure) {
+						deleteBill(bill.getBillNumber());
+					}
+				}
+			});
+			return delete;
+		}
+		return new Label("");
+	}
+
+	protected void deleteBill(final String billNumber) {
+		calculatorUserService.deteleBill(billNumber, currentGroup.getGroupName(),
+				new AsyncCallback<Void>() {
+
+					public void onSuccess(Void result) {
+						refreshGroupTabPanel();
+					}
+
+					public void onFailure(Throwable caught) {
+						Window.alert("server connect error when delete");
+					}
+				});
+	}
+
+	private Widget getBillNoteWrapper(DutchBill bill) {
+		final String note = bill.getBillDetailNote();
+		if (note == null || note.length() == 0) {
+			return new Label("");
+		}
+		if (note.length() < 20) {
+			return new Label(note);
+		} else {
+			Anchor showNoteBtn = new Anchor("Show Detail Note");
+			showNoteBtn.setStyleName("btn btn-mini");
+			showNoteBtn.getElement().setAttribute("data-toggle", "modal");
+			showNoteBtn.getElement().setAttribute("href", "#showBillNote");
+			showNoteBtn.addClickHandler(new ClickHandler() {
+
+				public void onClick(ClickEvent event) {
+					Label noteLabel = new Label(note);
+					RootPanel.get("billNoteBody").clear();
+					RootPanel.get("billNoteBody").add(noteLabel);
+				}
+			});
+
+			return showNoteBtn;
+		}
+
+	}
+
 	private Button getBillVerifyBtn(DutchBill bill) {
 		String username = currentUser.getUsername();
-		if(!bill.getIncludePeoples().contains(username)){
+		if (!bill.getIncludePeoples().contains(username)) {
 			Button noRelativeBillBtn = new Button("Inrelevant");
 			noRelativeBillBtn.setStyleName("btn disabled btn-mini");
 			return noRelativeBillBtn;
-		}else{
-			if(bill.getVerifidPeoples().contains(username)){
+		} else {
+			if (bill.getVerifidPeoples().contains(username)) {
 				Button varifiedBtn = new Button("Verified");
 				varifiedBtn.setStyleName("btn btn-success disabled btn-mini");
 				return varifiedBtn;
-			}else{
+			} else {
 				return createVerifyBtn(bill);
 			}
 		}
@@ -155,21 +258,21 @@ public class GroupBillPanel {
 		return verifyBtn;
 	}
 
-
 	private void addListenerToVeriyBillBtn(Button verifyBtn, final DutchBill bill) {
 		verifyBtn.addClickHandler(new ClickHandler() {
-			
+
 			public void onClick(ClickEvent event) {
-				calculatorUserService.userVerifyBill(currentUser.getUsername(), bill, new AsyncCallback<Void>() {
-					
-					public void onSuccess(Void result) {
-						refreshGroupTabPanel();
-					}
-					
-					public void onFailure(Throwable caught) {
-						Window.alert("server connect error when verify bill");
-					}
-				});
+				calculatorUserService.userVerifyBill(currentUser.getUsername(), bill,
+						new AsyncCallback<Void>() {
+
+							public void onSuccess(Void result) {
+								refreshGroupTabPanel();
+							}
+
+							public void onFailure(Throwable caught) {
+								Window.alert("server connect error when verify bill");
+							}
+						});
 			}
 		});
 	}
