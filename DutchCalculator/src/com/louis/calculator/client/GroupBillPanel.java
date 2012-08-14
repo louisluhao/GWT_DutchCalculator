@@ -162,7 +162,7 @@ public class GroupBillPanel {
 				billsTable.setText(row, 2, "$" + bill.getBillAmount());
 				billsTable.setText(row, 3, bill.getCreatUser());
 				Date date = new Date(bill.getBillDate());
-				billsTable.setText(row, 4, date.getMonth() + "/" + date.getDay() + "/"
+				billsTable.setText(row, 4, (date.getMonth() + 1) + "/" + date.getDate() + "/"
 						+ (date.getYear() + 1900));
 				billsTable.setText(row, 5, bill.getIncludePeoplesString());
 				billsTable.setWidget(row, 6, getBillNoteWrapper(bill));
