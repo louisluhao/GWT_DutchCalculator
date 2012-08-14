@@ -54,7 +54,7 @@ public class BillAlgo {
 	}
 
 	public static double formatDouble(double in) {
-		double up = (((int) (in * 1000)) % 10) >= 5 ? 0.01 : 0;
-		return ((double) ((int) (in * 100))) / 100.0 + up;
+//		double up = (((int) (in * 1000)) % 10) >= 5 ? 0.01 : 0;
+		return ((double) ((int) (in * 100))) / 100.0 + 0.01;
 	}
 }
