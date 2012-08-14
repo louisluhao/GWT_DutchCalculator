@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Dutch Calculator Alpha</title>
+<meta name="author" content="Louis Lu">
+<title>Dutch Calculator Beta</title>
 
 
 <!--styles -->
@@ -18,20 +19,120 @@ body {
 	font-weight: bold;
 }
 
-.negativeNumber{
-	color:red
+.negativeNumber {
+	color: red
 }
 
-.positiveNumber{
-	color:green
+.positiveNumber {
+	color: green
 }
 
+
+.gwt-DatePicker {
+  border: 1px solid #ccc;
+  border-top:1px solid #999;
+  cursor: default;
+}
+.gwt-DatePicker td,
+.datePickerMonthSelector td:focus {
+  outline: none;
+}
+.datePickerMonthSelector td:focus {
+  outline: none;
+}
+.datePickerDays {
+  width: 100%;
+  background: white;
+}
+.datePickerDay,
+.datePickerWeekdayLabel,
+.datePickerWeekendLabel {
+  font-size: 85%;
+  text-align: center;
+  padding: 4px;
+  outline: none;
+  font-weight:bold;
+  color:#333;
+  border-right: 1px solid #EDEDED;
+  border-bottom: 1px solid #EDEDED;
+}
+.datePickerWeekdayLabel,
+.datePickerWeekendLabel {
+  background: #fff;
+  padding: 0px 4px 2px;
+  cursor: default;
+  color:#666;
+  font-size:70%;
+  font-weight:normal;
+}
+.datePickerDay {
+  padding: 4px 7px;
+  cursor: hand;
+  cursor: pointer;
+}
+.datePickerDayIsWeekend {
+  background: #f7f7f7;
+}
+.datePickerDayIsFiller {
+  color: #999;
+  font-weight:normal;
+}
+.datePickerDayIsValue {
+  background: #00BBFF;
+}
+.datePickerDayIsDisabled {
+  color: #AAAAAA;
+  font-style: italic;
+}
+.datePickerDayIsHighlighted {
+  background: #F0E68C;
+}
+.datePickerDayIsValueAndHighlighted {
+  background: #009FCC;
+}
+.datePickerMonthSelector {
+  width: 100%;
+  padding: 1px 0 5px 0;
+  background: #fff;
+}
+.datePickerPreviousButton,
+.datePickerNextButton {
+  font-size: 120%;
+  line-height: 1em;
+  color: #3a6aad;
+  cursor: hand;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0px 4px;
+  outline: none;
+}
+td.datePickerMonth {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: 100%;
+  font-weight: bold;
+  color: #333;
+}
+.gwt-DateBox {
+  padding: 5px 4px;
+  border: 1px solid #ccc;
+  border-top: 1px solid #999;
+  font-size: 100%;
+}
+.gwt-DateBox input {
+  width: 8em;
+}
+.dateBoxFormatError {
+  background: #ffcccc;
+}
+.dateBoxPopup {
+}
 </style>
 
 <!-- js -->
 <script src="resource/js/jquery.js"></script>
 <script src="resource/js/bootstrap.min.js"></script>
-
 
 
 
@@ -42,114 +143,125 @@ body {
 	<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1'
 		style="position: absolute; width: 0; height: 0; border: 0"></iframe>
 
-		<div class="navbar navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container">
-					<a class="btn btn-navbar" data-toggle="collapse"
-						data-target=".nav-collapse"> <span class="icon-bar"></span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span>
-					</a> <a class="brand" href="#">Dutch Calculator(Alpha)</a>
-					<div class="nav-collapse">
-						<ul class="nav">
-							<li><a id="nav-user"></a></li>
-							<li><a href="#" id="welcome"></a></li>
-							<li><a href="#contact">Contact</a></li>
-						</ul>
-					</div>
-					<!--/.nav-collapse -->
-				</div>
-			</div>
-		</div>
-
-		<div class="container">
-			<div class="row">
-
-				<div class="span2">
-					<div class="well" style="padding: 8px 0;">
-						<ul class="nav nav-list">
-							<li class="nav-header"><i class="icon-th-list"></i>Your
-								Group</li>
-						</ul>
-						<ul class="nav nav-list" id="groupList">
-						</ul>
-						<ul class="nav nav-list">
-							<li class="divider"></li>
-						</ul>
-						<div style="padding: 8px;" class="btn-group" id="groupBtns">
-							<a class="btn" data-toggle="modal" href="#newGroup"><i
-								class="icon-plus"></i></a> <a class="btn" data-toggle="modal"
-								href="#findGroup"><i class="icon-search"></i></a>
-						</div>
-						<!-- /well -->
-					</div>
-				</div>
-
-				<div class="span10">
-					<ul id="myTab" class="nav nav-tabs">
-						<li class="active" id="homePanelLink"></li>
-						<li id="billPanelLink"></li>
-						<li id="adminPanelLink"></li>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" href="#">Dutch Calculator(Beta)</a>
+				<div class="nav-collapse">
+					<ul class="nav">
+						<li><a id="nav-user"></a></li>
+						<li><a href="#" id="welcome"></a></li>
 					</ul>
-					<div id="myTabContent" class="tab-content">
-						<div class="tab-pane fade in active" id="groupHomePanel">
-							<h2 id="groupTitle"></h2>
-							<div class="row">
-								<div class="span3" id="groupUserListTable"></div>
-							</div>
+				</div>
+				<!--/.nav-collapse -->
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+
+			<div class="span2">
+				<div class="well" style="padding: 8px 0;">
+					<ul class="nav nav-list">
+						<li class="nav-header"><i class="icon-th-list"></i>Your Group</li>
+					</ul>
+					<ul class="nav nav-list" id="groupList">
+					</ul>
+					<ul class="nav nav-list">
+						<li class="divider"></li>
+					</ul>
+					<div style="padding: 8px;" class="btn-group" id="groupBtns">
+						<a class="btn" data-toggle="modal" href="#newGroup"><i
+							class="icon-plus"></i></a> <a class="btn" data-toggle="modal"
+							href="#findGroup"><i class="icon-search"></i></a>
+					</div>
+					<!-- /well -->
+				</div>
+			</div>
+
+			<div class="span10">
+				<ul id="myTab" class="nav nav-tabs">
+					<li class="active" id="homePanelLink"></li>
+					<li id="billPanelLink"></li>
+					<li id="adminPanelLink"></li>
+				</ul>
+				<div id="myTabContent" class="tab-content">
+					<div class="tab-pane fade in active" id="groupHomePanel">
+						<h2 id="groupTitle"></h2>
+						<div class="row">
+							<div class="span3" id="groupUserListTable"></div>
 						</div>
-						<div class="tab-pane fade" id="billPanel"></div>
-						<div class="tab-pane fade" id="adminPanel">
-							<div class="row">
-								<div class="span3" id="groupApplyListTable"></div>
-							</div>
+					</div>
+					<div class="tab-pane fade" id="billPanel"></div>
+					<div class="tab-pane fade" id="adminPanel">
+						<div class="row">
+							<div class="span3" id="groupApplyListTable"></div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<div class="modal hide fade" id="newGroup">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">×</button>
-				<h3>Create New Group</h3>
-			</div>
-			<div class="modal-body">
-				<div class="control-group" id="registerGroupnameGroup">
-					<label class="control-label" for="controls-groupname">Group
-						Name</label>
-					<div class="controls-groupname">
-						<div id="registerGroupName"></div>
-						<p class="help-block" id="registerGroupNameTip"></p>
-					</div>
+	<div class="modal hide fade" id="newGroup">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>Create New Group</h3>
+		</div>
+		<div class="modal-body">
+			<div class="control-group" id="registerGroupnameGroup">
+				<label class="control-label" for="controls-groupname">Group
+					Name</label>
+				<div class="controls-groupname">
+					<div id="registerGroupName"></div>
+					<p class="help-block" id="registerGroupNameTip"></p>
 				</div>
 			</div>
-			<div class="modal-footer">
-				<a class="btn" data-dismiss="modal" id="closeRegisterGroup">Close</a>
-				<a id="registerNewGroupButton"></a>
-			</div>
 		</div>
+		<div class="modal-footer">
+			<a class="btn" data-dismiss="modal" id="closeRegisterGroup">Close</a>
+			<a id="registerNewGroupButton"></a>
+		</div>
+	</div>
 
-		<div class="modal hide fade" id="findGroup">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">×</button>
-				<h3>Find Your Group</h3>
-			</div>
-			<div class="modal-body" id="searchGroupPanel"></div>
-			<div class="modal-footer">
-				<a class="btn" data-dismiss="modal" id="closeFindGroup">Close</a>
-			</div>
+	<div class="modal hide fade" id="findGroup">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>Find Your Group</h3>
 		</div>
+		<div class="modal-body" id="searchGroupPanel"></div>
+		<div class="modal-footer">
+			<a class="btn" data-dismiss="modal" id="closeFindGroup">Close</a>
+		</div>
+	</div>
 
-		<div class="modal hide fade" id="billPopUp">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">×</button>
-				<h3 id="billPopUpTitle"></h3>
-			</div>
-			<div class="modal-body" id="billPopUpPanel"></div>
-			<div class="modal-footer" id="billPopUpFooter">
-				<a class="btn" data-dismiss="modal" id="closeBillPopUp">Close</a>
-			</div>
+	<div class="modal hide fade" id="billPopUp">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3 id="billPopUpTitle"></h3>
 		</div>
+		<div class="modal-body" id="billPopUpPanel"></div>
+		<div class="modal-footer" id="billPopUpFooter">
+			<a class="btn" data-dismiss="modal" id="closeBillPopUp">Close</a>
+		</div>
+	</div>
+
+	<div class="modal hide fade" id="showBillNote">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>Bill Detail Note</h3>
+		</div>
+		<div class="modal-body" id="billNoteBody"></div>
+		<div class="modal-footer">
+			<a class="btn" data-dismiss="modal">Close</a>
+		</div>
+	</div>
+
+
 	<div align="center" class="footer">
 		<p>&copy; Louis Lu 2012</p>
 	</div>
