@@ -25,4 +25,5 @@ public interface CalculatorUserService extends RemoteService {
 	public List<DutchBill> getBills(List<String> billNames);
 	public Void userVerifyBill(String username, DutchBill bill);
 	public Void deteleBill(String billNumber, String groupName);
+	public Void deleteUser(String username, String groupName);
 }

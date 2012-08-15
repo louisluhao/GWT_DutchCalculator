@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -35,14 +36,24 @@ public class GroupAdminPanel {
 	Label applyListTitle;
 	FlexTable applyListTable;
 	Label applyListHeader;
+	
+	/*
+	 * user manage list
+	 */
+	VerticalPanel userListPanel;
+	Label userListTitle;
+	FlexTable userListTable;
+	Label userListHeader;
 
 	public GroupAdminPanel(GroupTab tab) {
 		this.groupTab = tab;
 
 		adminLink = getAdminLink();
 		buildApplyListPanel();
+		buildUserListPanel();
 
 		RootPanel.get("groupApplyListTable").add(applyListPanel);
+		RootPanel.get("groupUserManagementPanel").add(userListPanel);
 	}
 
 	private Anchor getAdminLink() {
@@ -64,8 +75,24 @@ public class GroupAdminPanel {
 		applyListHeader.setStyleName("listheader");
 
 		applyListPanel = new VerticalPanel();
+		applyListPanel.setStyleName("paddingPanel");
 		applyListPanel.add(applyListTitle);
 		applyListPanel.add(applyListTable);
+	}
+	
+	private void buildUserListPanel() {
+		userListTitle = new Label();
+		userListTitle.getElement().setInnerHTML("<h2>User Management</h2>");
+		
+		userListTable = new FlexTable();
+		userListHeader = new Label("Username");
+		userListTable.setStyleName("table table-striped table-bordered");
+		userListHeader.setStyleName("listheader");
+		
+		userListPanel = new VerticalPanel();
+		userListPanel.setStyleName("paddingPanel");
+		userListPanel.add(userListTitle);
+		userListPanel.add(userListTable);
 	}
 
 	public void RefreshGroup(DutchGroup currentGroup, DutchUser currentUser) {
@@ -88,6 +115,7 @@ public class GroupAdminPanel {
 	private void showAdminPanel() {
 		addTabLinkToHtml();
 		refreshApplyListTable();
+		refreshUserListTable();
 	}
 
 	private void addTabLinkToHtml() {
@@ -174,4 +202,58 @@ public class GroupAdminPanel {
 		});
 	}
 
+	private void refreshUserListTable() {
+		userListTable.removeAllRows();
+		buildUserListTableHeader();
+		buildUserListTableByCurrentGroup();
+		
+	}
+
+	private void buildUserListTableHeader() {
+		userListTable.setWidget(0, 0, userListHeader);
+		userListTable.setText(0, 1, "");
+	}
+
+	private void buildUserListTableByCurrentGroup() {
+		int row = 1;
+		for(String username : currentGroup.getUserList()){
+			userListTable.setText(row, 0, username);
+			userListTable.setWidget(row, 1, getDeleteUserBtn(username));
+			row ++;
+		}
+	}
+
+	private Widget getDeleteUserBtn(String username) {
+		if(username.equals(currentUser.getUsername())){
+			return null;
+		}
+		Button btn = new Button("Delete User");
+		btn.setStyleName("btn btn-mini btn-danger");
+		addClickListenerToDeleteUserBtn(btn , username);
+		return btn;
+	}
+
+	private void addClickListenerToDeleteUserBtn(Button btn,final String username) {
+		btn.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				if(Window.confirm("Do you really want to delete user "+ username + " ?")){
+					deleteUser(username, currentGroup.getGroupName());
+				}
+			}
+		});
+	}
+
+	protected void deleteUser(final String username,final String groupName) {
+		calculatorUserService.deleteUser(username, groupName, new AsyncCallback<Void>() {
+			
+			public void onSuccess(Void result) {
+				groupTab.refreshUserAndGroup(username, groupName);
+			}
+			
+			public void onFailure(Throwable caught) {
+				Window.alert("server connect error when delete user " + username);
+			}
+		});
+	}
 }

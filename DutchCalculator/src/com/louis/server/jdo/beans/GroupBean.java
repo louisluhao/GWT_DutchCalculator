@@ -111,4 +111,8 @@ public class GroupBean {
 	public boolean removeBill(String billName){
 		return billList.remove(billName);
 	}
+	
+	public boolean deleteUser(String username){
+		return this.userList.remove(username);
+	}
 }

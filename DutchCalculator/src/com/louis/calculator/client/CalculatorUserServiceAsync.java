@@ -40,4 +40,6 @@ public interface CalculatorUserServiceAsync {
 	
 	public void deteleBill(String billName, String groupName, AsyncCallback<Void> async);
 	
+	public void deleteUser(String username, String groupName, AsyncCallback<Void> async);
+	
 }

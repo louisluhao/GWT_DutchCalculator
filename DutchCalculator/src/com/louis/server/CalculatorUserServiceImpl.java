@@ -210,5 +210,16 @@ public class CalculatorUserServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 
+	public Void deleteUser(String username, String groupName) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try{
+			GroupBean group = pm.getObjectById(GroupBean.class, groupName);
+			group.deleteUser(username);
+			return null;
+		}finally{
+			pm.close();
+		}
+	}
+
 
 }
