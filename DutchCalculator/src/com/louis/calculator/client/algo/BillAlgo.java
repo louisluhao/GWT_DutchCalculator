@@ -6,11 +6,11 @@ import java.util.List;
 import com.louis.calculator.beans.DutchBill;
 
 public class BillAlgo {
-	
-	private static List<DutchBill> fillterOutDeletedBills(List<DutchBill> bills){
+
+	private static List<DutchBill> fillterOutDeletedBills(List<DutchBill> bills) {
 		List<DutchBill> list = new ArrayList<DutchBill>();
-		for(DutchBill bill : bills){
-			if(!bill.isDeleted()){
+		for (DutchBill bill : bills) {
+			if (!bill.isDeleted()) {
 				list.add(bill);
 			}
 		}
@@ -56,9 +56,9 @@ public class BillAlgo {
 	public static double formatDouble(double in) {
 		double up = Math.abs(((int) (in * 1000)) % 10) >= 5 ? 0.01 : 0;
 		double resultNum = ((double) ((int) (in * 100))) / 100.0;
-		if(resultNum < 0){
+		if (resultNum < 0) {
 			resultNum -= up;
-		}else{
+		} else {
 			resultNum += up;
 		}
 		return resultNum;
