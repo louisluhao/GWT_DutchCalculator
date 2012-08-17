@@ -5,6 +5,7 @@ import static com.louis.calculator.client.algo.BillAlgo.*;
 
 import java.util.List;
 
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -95,7 +96,7 @@ public class GroupHomePanel {
 
 	private Label getBalanceFormater(double balance) {
 		Label bl = new Label();
-		bl.setText("$" + String.valueOf(balance));
+		bl.setText("$" + NumberFormat.getFormat("#.00").format(balance));
 		if (balance > 0) {
 			bl.setStyleName(" positiveNumber");
 		} else if (balance < 0) {
